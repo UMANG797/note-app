@@ -77,7 +77,13 @@ const Home = () => {
           "w-[40%] max-h-3/4 rounded mx-auto mt-14 p-5 overflow-scroll"
         }
       >
-        <AddEditNotes />
+        <AddEditNotes
+          type={openAddEditModel.type}
+          noteData={openAddEditModel.data}
+          onClose={() => {
+            setOpenAddEditModel({ isShown: false, type: "add", data: null });
+          }}
+        />
       </Modal>
     </>
   );
