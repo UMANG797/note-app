@@ -92,9 +92,51 @@ app.post("/add-note", authenticateToken, async (req, res) => {
     }
   });
   
-app.post("/edit-note/:noteId",async(req,res)=>{
-    const noteId=req.params.noteId;
-})
+  app.post("/edit-note/:noteId", authenticateToken, async (req, res) => {
+    const noteId = req.params.noteId;
+    const { title, content, tags, isPinned } = req.body;
+    const {user} = req.user;
+
+    if (!user || !user._id) {
+        return res.status(400).json({ error: true, message: "Invalid token, user not found" });
+    }
+
+    console.log("User Info: ", user); // Ensure user is correctly added to req.user
+    console.log("Note ID:", noteId);  // Log noteId for debugging
+
+    if (!title && !content && !tags) {
+        return res.status(400).json({ error: true, message: "No changes provided" });
+    }
+
+    // Validate if the noteId is a valid ObjectId
+    const { ObjectId } = require("mongoose").Types;
+    if (!ObjectId.isValid(noteId)) {
+        return res.status(400).json({ error: true, message: "Invalid noteId" });
+    }
+
+    try {
+        // Convert user._id to a string for matching the userId in the note
+        const note = await Note.findOne({ _id: noteId, userId: user._id.toString() });
+
+        if (!note) {
+            return res.status(400).json({ error: true, message: "Note not found" });
+        }
+
+        if (title) note.title = title;
+        if (content) note.content = content;
+        if (tags) note.tags = tags;
+        if (isPinned !== undefined) note.isPinned = isPinned;
+
+        await note.save();
+        return res.json({ error: false, note, message: "Note updated successfully" });
+    } catch (error) {
+        console.error("Error updating note: ", error);
+        return res.status(500).json({ error: true, message: "Internal server error" });
+    }
+});
+
+
+
 
 app.listen(8000, () => {
   console.log("Server running on port 8000");
