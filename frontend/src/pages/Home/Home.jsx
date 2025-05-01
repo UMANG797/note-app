@@ -14,6 +14,7 @@ const Home = () => {
     data: null,
   });
 
+  const [allNotes, setAllNotes] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
 
   const navigate = useNavigate();
@@ -21,9 +22,7 @@ const Home = () => {
   const getUserInfo = async () => {
     try {
       const response = await axiosInstace.get("/get-user");
-      //console.log(response);
       if (response.data) {
-        //console.log(response.data);
         setUserInfo(response.data);
       }
     } catch (error) {
@@ -33,7 +32,20 @@ const Home = () => {
       }
     }
   };
+
+  const getAllNotes = async () => {
+    try {
+      const response = await axiosInstace.get("/get-all-notes");
+      if (response.data && response.data.notes) {
+        console.log(response.data.notes);
+        setAllNotes(response.data.notes);
+      }
+    } catch (error) {
+      console.log("an unexprected error occured.Please try again" + error);
+    }
+  };
   useEffect(() => {
+    getAllNotes();
     getUserInfo();
     return () => {};
   }, []);
@@ -42,46 +54,19 @@ const Home = () => {
       <Navbar userInfo={userInfo} />
       <div className="container mx-auto">
         <div className="grid grid-cols-3 gap-4 mt-8">
-          <NoteCard
-            title={"meeting on 7th  April"}
-            date={"3rd April 2024"}
-            content={"will be held "}
-            tags={"#meeting #conferencing"}
-            isPinned={true}
-            onEdit={() => {}}
-            onDelete={() => {}}
-            onPinNote={() => {}}
-          />
-          <NoteCard
-            title={"meeting on 7th  April"}
-            date={"3rd April 2024"}
-            content={"will be held "}
-            tags={"#meeting #conferencing"}
-            isPinned={true}
-            onEdit={() => {}}
-            onDelete={() => {}}
-            onPinNote={() => {}}
-          />
-          <NoteCard
-            title={"meeting on 7th  April"}
-            date={"3rd April 2024"}
-            content={"will be held "}
-            tags={"#meeting #conferencing"}
-            isPinned={true}
-            onEdit={() => {}}
-            onDelete={() => {}}
-            onPinNote={() => {}}
-          />
-          <NoteCard
-            title={"meeting on 7th  April"}
-            date={"3rd April 2024"}
-            content={"will be held "}
-            tags={"#meeting #conferencing"}
-            isPinned={true}
-            onEdit={() => {}}
-            onDelete={() => {}}
-            onPinNote={() => {}}
-          />
+          {allNotes.map((item) => (
+            <NoteCard
+              key={item._id}
+              title={item.title}
+              date={item.createdOn}
+              content={item.content}
+              tags={item.tags}
+              isPinned={item.isPinned}
+              onEdit={() => {}}
+              onDelete={() => {}}
+              onPinNote={() => {}}
+            />
+          ))}
         </div>
       </div>
       <button

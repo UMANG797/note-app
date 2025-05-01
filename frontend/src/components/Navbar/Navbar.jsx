@@ -6,7 +6,6 @@ import { useState } from "react";
 
 const Navbar = ({ userInfo }) => {
   //console.log(userInfo);
-  console.log(userInfo);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
