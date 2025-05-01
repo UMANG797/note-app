@@ -19,6 +19,10 @@ const Home = () => {
 
   const navigate = useNavigate();
 
+  const handleEdit = (noteDetails) => {
+    setOpenAddEditModel({ isShown: true, data: noteDetails, type: "edit" });
+  };
+
   const getUserInfo = async () => {
     try {
       const response = await axiosInstace.get("/get-user");
@@ -62,7 +66,9 @@ const Home = () => {
               content={item.content}
               tags={item.tags}
               isPinned={item.isPinned}
-              onEdit={() => {}}
+              onEdit={() => {
+                handleEdit(item);
+              }}
               onDelete={() => {}}
               onPinNote={() => {}}
             />
@@ -94,6 +100,7 @@ const Home = () => {
           onClose={() => {
             setOpenAddEditModel({ isShown: false, type: "add", data: null });
           }}
+          getAllNotes={getAllNotes}
         />
       </Modal>
     </>

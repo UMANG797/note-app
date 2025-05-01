@@ -1,14 +1,35 @@
 import React, { useState } from "react";
 import TagInput from "../../components/Input/TagInput";
 import { MdClose } from "react-icons/md";
+import axiosInstace from "../../utils/axiosInstance";
 
-const AddEditNotes = ({ noteData, type, onClose }) => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [tags, setTags] = useState([]);
+const AddEditNotes = ({ noteData, type, onClose, getAllNotes }) => {
+  const [title, setTitle] = useState(noteData.title || "");
+  const [content, setContent] = useState(noteData.content || "");
+  const [tags, setTags] = useState(noteData.tags || []);
   const [error, setError] = useState(null);
 
-  const addNewNote = async () => {};
+  const addNewNote = async () => {
+    try {
+      const response = await axiosInstace.post("/add-note", {
+        title,
+        content,
+        tags,
+      });
+      if (response.data && response.data.note) {
+        getAllNotes();
+        onClose();
+      }
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setError(error.response.data.message);
+      }
+    }
+  };
   const editNote = async () => {};
   const handleAddNote = () => {
     if (!title) {
@@ -66,7 +87,7 @@ const AddEditNotes = ({ noteData, type, onClose }) => {
           className="btn-primary font-medium mt-5 p-3"
           onClick={handleAddNote}
         >
-          ADD
+          {type === "edit" ? "edit" : "add"}
         </button>
       </div>
     </>
