@@ -21,8 +21,10 @@ const Home = () => {
   const getUserInfo = async () => {
     try {
       const response = await axiosInstace.get("/get-user");
-      if (response.data && response.data.user) {
-        setUserInfo(response.data.user);
+      //console.log(response);
+      if (response.data) {
+        //console.log(response.data);
+        setUserInfo(response.data);
       }
     } catch (error) {
       if (error.response.status === 401) {
@@ -37,7 +39,7 @@ const Home = () => {
   }, []);
   return (
     <>
-      <Navbar userrInfo={userInfo} />
+      <Navbar userInfo={userInfo} />
       <div className="container mx-auto">
         <div className="grid grid-cols-3 gap-4 mt-8">
           <NoteCard
