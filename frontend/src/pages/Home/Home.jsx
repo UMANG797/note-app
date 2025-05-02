@@ -6,12 +6,19 @@ import AddEditNotes from "./AddEditNotes";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import axiosInstace from "../../utils/axiosInstance";
+import Toast from "../../components/ToastMessage/Toast";
 
 const Home = () => {
   const [openAddEditModel, setOpenAddEditModel] = useState({
     isShown: false,
     type: "add",
     data: {},
+  });
+
+  const [showToastMsg, setShowToastMsg] = useState({
+    isShown: false,
+    message: "",
+    type: "add",
   });
 
   const [allNotes, setAllNotes] = useState([]);
@@ -46,6 +53,14 @@ const Home = () => {
     } catch (error) {
       console.error("An unexpected error occurred. Please try again", error);
     }
+  };
+
+  const setShowToastMessage = (message, type) => {
+    setShowToastMsg({ isShown: false, message, type });
+  };
+
+  const handleCloseToast = () => {
+    setShowToastMessage({ isShown: false, message: "" });
   };
 
   useEffect(() => {
@@ -99,8 +114,15 @@ const Home = () => {
             setOpenAddEditModel({ isShown: false, type: "add", data: {} })
           }
           getAllNotes={getAllNotes}
+          showToastMessage={showToastMsg}
         />
       </Modal>
+      <Toast
+        isShown={showToastMsg.isShown}
+        message={showToastMsg.message}
+        type={showToastMsg.type}
+        onClose={handleCloseToast}
+      />
     </>
   );
 };

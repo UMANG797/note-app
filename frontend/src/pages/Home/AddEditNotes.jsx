@@ -17,6 +17,7 @@ const AddEditNotes = ({ noteData = {}, type, onClose, getAllNotes }) => {
         tags,
       });
       if (response.data?.note) {
+        showToastMessage("Note added successfully");
         getAllNotes();
         onClose();
       }
